@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Kunjungan {
+  id         Int      @id @default(autoincrement())
+  nik        String
+  nama       String
+  alamat     String
+  rt         String
+  rw         String
+  no_hp      String
+  keperluan  String
+  created_at DateTime @default(now())
+
+  @@index([created_at])
+  @@index([keperluan])
+  @@map("kunjungan")
+}
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  username   String   @unique
+  password   String
+  full_name  String   @default("Administrator")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("admin")
+}
+
+model IkmImage {
+  id          Int      @id @default(autoincrement())
+  image_url   String
+  bulan       String
+  is_active   Boolean  @default(true)
+  uploaded_at DateTime @default(now())
+
+  @@index([bulan])
+  @@index([is_active])
+  @@map("ikm_image")
+}
+
+model Settings {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  value      String
+  updated_at DateTime @updatedAt
+
+  @@map("settings")
+}

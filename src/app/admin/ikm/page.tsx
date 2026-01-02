@@ -6,14 +6,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, Upload, Loader2, CheckCircle } from "lucide-react";
+import { ArrowLeft, Upload, Loader2, CheckCircle, Image as ImageIcon } from "lucide-react";
 
 export default function AdminIkmPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imageUrl, setImageUrl] = useState("");
   const [bulan, setBulan] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("admin_token");
@@ -30,8 +33,73 @@ export default function AdminIkmPage() {
     setBulan(currentMonth);
   }, []);
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validasi tipe file
+    if (!file.type.startsWith('image/')) {
+      alert('File harus berupa gambar!');
+      return;
+    }
+
+    // Validasi ukuran file (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Ukuran file maksimal 10MB!');
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // Buat preview lokal
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload ke Cloudinary
+    await uploadToCloudinary(file);
+  };
+
+  const uploadToCloudinary = async (file: File) => {
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'ikm_uploads'); // Ganti dengan upload preset kamu
+      
+      const response = await fetch(
+        'https://api.cloudinary.com/v1_1/dgfs2wh8a/image/upload', // Ganti YOUR_CLOUD_NAME
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.secure_url) {
+        setImageUrl(data.secure_url);
+      } else {
+        alert('Gagal upload gambar ke server. Silakan coba lagi.');
+      }
+    } catch (error) {
+      console.error('Error uploading to Cloudinary:', error);
+      alert('Gagal upload gambar. Silakan coba lagi.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!imageUrl) {
+      alert('Silakan pilih gambar terlebih dahulu');
+      return;
+    }
+
     setLoading(true);
     setSuccess(false);
 
@@ -52,6 +120,8 @@ export default function AdminIkmPage() {
       if (data.success) {
         setSuccess(true);
         setImageUrl("");
+        setSelectedFile(null);
+        setPreviewUrl("");
         setTimeout(() => {
           router.push("/admin");
         }, 2000);
@@ -138,82 +208,102 @@ export default function AdminIkmPage() {
                 </p>
               </div>
 
-              {/* Image URL */}
+              {/* File Upload */}
               <div>
-                <Label htmlFor="imageUrl">
-                  URL Gambar <span className="text-red-500">*</span>
+                <Label htmlFor="fileUpload">
+                  Pilih Gambar <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="imageUrl"
-                  type="url"
-                  placeholder="https://example.com/ikm-image.jpg"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  required
-                />
+                <div className="mt-2">
+                  <input
+                    id="fileUpload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                  <label
+                    htmlFor="fileUpload"
+                    className={`flex items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors ${
+                      uploading
+                        ? 'border-gray-300 bg-gray-50 cursor-not-allowed'
+                        : 'border-gray-300 hover:border-primary hover:bg-primary/5'
+                    }`}
+                  >
+                    {uploading ? (
+                      <div className="text-center">
+                        <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin text-primary" />
+                        <p className="text-sm text-gray-600">Mengupload gambar...</p>
+                        <p className="text-xs text-gray-500 mt-1">Harap tunggu</p>
+                      </div>
+                    ) : selectedFile ? (
+                      <div className="text-center">
+                        <CheckCircle className="w-8 h-8 mx-auto mb-2 text-green-600" />
+                        <p className="text-sm font-medium text-gray-900">{selectedFile.name}</p>
+                        <p className="text-xs text-gray-500 mt-1">Klik untuk ganti gambar</p>
+                      </div>
+                    ) : (
+                      <div className="text-center">
+                        <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+                        <p className="text-sm font-medium text-gray-900">
+                          Klik untuk pilih gambar
+                        </p>
+                        <p className="text-xs text-gray-500 mt-1">
+                          PNG, JPG, atau JPEG (Max 10MB)
+                        </p>
+                      </div>
+                    )}
+                  </label>
+                </div>
                 <p className="text-sm text-gray-500 mt-1">
-                  Upload gambar ke hosting (seperti Imgur, ImgBB, atau Google
-                  Drive) lalu paste URL-nya di sini
+                  Gambar akan otomatis diupload ke cloud storage
                 </p>
               </div>
 
               {/* Preview */}
-              {imageUrl && (
+              {previewUrl && (
                 <div>
                   <Label>Preview Gambar</Label>
-                  <div className="mt-2 border rounded-lg p-4">
+                  <div className="mt-2 border rounded-lg p-4 bg-gray-50">
                     <img
-                      src={imageUrl}
+                      src={previewUrl}
                       alt="Preview IKM"
                       className="w-full h-auto rounded-lg"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300'%3E%3Crect fill='%23f3f4f6' width='400' height='300'/%3E%3Ctext fill='%236b7280' font-family='sans-serif' font-size='18' dy='10.5' font-weight='bold' x='50%25' y='50%25' text-anchor='middle'%3EGagal memuat gambar%3C/text%3E%3C/svg%3E";
-                      }}
                     />
                   </div>
+                  {imageUrl && (
+                    <p className="text-xs text-green-600 mt-2 flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      Upload berhasil! Gambar siap disimpan
+                    </p>
+                  )}
                 </div>
               )}
 
               {/* Info Box */}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <p className="text-sm text-blue-900 font-semibold mb-2">
-                  💡 Tips Upload Gambar:
+                  💡 Cara Upload:
                 </p>
                 <ul className="text-sm text-blue-800 space-y-1">
-                  <li>
-                    1. Upload gambar ke{" "}
-                    <a
-                      href="https://imgur.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      Imgur
-                    </a>{" "}
-                    atau{" "}
-                    <a
-                      href="https://imgbb.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline"
-                    >
-                      ImgBB
-                    </a>
-                  </li>
-                  <li>2. Copy URL gambar (klik kanan → Copy image address)</li>
-                  <li>3. Paste URL di form di atas</li>
-                  <li>4. Pastikan gambar terlihat di preview</li>
+                  <li>1. Klik area upload di atas</li>
+                  <li>2. Pilih gambar dari perangkat kamu</li>
+                  <li>3. Tunggu hingga upload selesai (muncul centang hijau)</li>
+                  <li>4. Klik tombol "Upload IKM" untuk menyimpan</li>
                 </ul>
               </div>
 
               {/* Submit Button */}
               <div className="flex gap-3">
-                <Button type="submit" className="flex-1" disabled={loading}>
+                <Button 
+                  type="submit" 
+                  className="flex-1" 
+                  disabled={loading || uploading || !imageUrl}
+                >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Mengupload...
+                      Menyimpan...
                     </>
                   ) : (
                     <>
@@ -223,7 +313,7 @@ export default function AdminIkmPage() {
                   )}
                 </Button>
                 <Link href="/admin">
-                  <Button type="button" variant="outline">
+                  <Button type="button" variant="outline" disabled={loading || uploading}>
                     Batal
                   </Button>
                 </Link>

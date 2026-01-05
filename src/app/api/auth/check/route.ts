@@ -1,3 +1,6 @@
+export const dynamic = 'force-dynamic';
+
+// sisanya tetap sama...
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyToken, extractTokenFromHeader } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';

@@ -35,6 +35,7 @@ interface Kunjungan {
   rw: string;
   no_hp: string;
   keperluan: string;
+  petugas?: string | null;
   created_at: string;
 }
 
@@ -357,12 +358,15 @@ export default function AdminDashboardPage() {
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
                     Tanggal
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                    Petugas
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {filteredData.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                    <td colSpan={9} className="px-6 py-12 text-center text-gray-500">
                       Tidak ada data
                     </td>
                   </tr>
@@ -393,6 +397,10 @@ export default function AdminDashboardPage() {
                       <td className="px-6 py-4 text-sm text-gray-600">
                         {formatDateIndonesia(new Date(item.created_at))}
                       </td>
+                      <td className="px-6 py-4 text-sm text-gray-600">
+                        {item.petugas ? item.petugas : "-"}
+                      </td>
+
                     </tr>
                   ))
                 )}

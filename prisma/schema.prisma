@@ -17,6 +17,7 @@ model Kunjungan {
   no_hp      String
   keperluan  String
   created_at DateTime @default(now())
+  petugas    String?  @db.VarChar(100)
 
   @@index([created_at])
   @@index([keperluan])

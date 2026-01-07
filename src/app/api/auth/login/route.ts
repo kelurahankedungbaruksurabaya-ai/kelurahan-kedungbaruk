@@ -1,60 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
-import { verifyPassword, generateToken } from '@/lib/auth';
+// src/app/api/auth/login/route.ts
+import { NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
-    const body = await request.json();
-    const { username, password } = body;
+    const { username, password } = await request.json();
 
-    if (!username || !password) {
+    // ambil dari ENV
+    const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+    const JWT_SECRET = process.env.JWT_SECRET;
+
+    if (!ADMIN_USERNAME || !ADMIN_PASSWORD || !JWT_SECRET) {
       return NextResponse.json(
-        { success: false, message: 'Username dan password wajib diisi' },
-        { status: 400 }
+        { success: false, message: "Konfigurasi server belum lengkap" },
+        { status: 500 }
       );
     }
 
-    const admin = await prisma.admin.findUnique({
-      where: { username },
-    });
-
-    if (!admin) {
+    // validasi login
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
       return NextResponse.json(
-        { success: false, message: 'Username atau password salah' },
+        { success: false, message: "Username atau password salah" },
         { status: 401 }
       );
     }
 
-    const isPasswordValid = await verifyPassword(password, admin.password);
-
-    if (!isPasswordValid) {
-      return NextResponse.json(
-        { success: false, message: 'Username atau password salah' },
-        { status: 401 }
-      );
-    }
-
-    const token = generateToken({
-      userId: admin.id,
-      username: admin.username,
-    });
+    // buat token
+    const token = jwt.sign(
+      { username: ADMIN_USERNAME, role: "admin" },
+      JWT_SECRET,
+      { expiresIn: "1d" }
+    );
 
     return NextResponse.json({
       success: true,
-      message: 'Login berhasil',
       data: {
         token,
         user: {
-          id: admin.id,
-          username: admin.username,
-          full_name: admin.full_name,
+          username: ADMIN_USERNAME,
+          role: "admin",
         },
       },
     });
-  } catch (error: any) {
-    console.error('Error login:', error);
+  } catch (error) {
+    console.error("Login error:", error);
     return NextResponse.json(
-      { success: false, message: 'Terjadi kesalahan saat login' },
+      { success: false, message: "Terjadi kesalahan server" },
       { status: 500 }
     );
   }

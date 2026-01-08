@@ -3,6 +3,29 @@ import { prisma } from "@/lib/prisma";
 import { validateNIK, validatePhone } from "@/lib/utils";
 import { KEPERLUAN_OPTIONS } from "@/lib/constants";
 
+// Method GET - untuk ambil semua data
+export async function GET(request: Request) {
+  try {
+    const data = await prisma.kunjungan.findMany({
+      orderBy: {
+        created_at: 'desc'
+      }
+    });
+
+    return NextResponse.json(
+      { success: true, data },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      { success: false, error: "Terjadi kesalahan server" },
+      { status: 500 }
+    );
+  }
+}
+
+// Method POST - untuk kirim data baru (yang udah ada)
 export async function POST(request: Request) {
   try {
     const data = await request.json();

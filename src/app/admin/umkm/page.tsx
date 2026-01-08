@@ -146,35 +146,39 @@ export default function AdminUMKMPage() {
   };
 
   const uploadImage = async (): Promise<string | null> => {
-    if (!selectedFile) return formData.foto_url || null;
+  if (!selectedFile) return formData.foto_url || null;
 
-    setUploadingImage(true);
-    try {
-      const formDataUpload = new FormData();
-      formDataUpload.append('file', selectedFile);
-
-      const response = await fetch('/api/upload', {
+  setUploadingImage(true);
+  try {
+    const cloudinaryFormData = new FormData();
+    cloudinaryFormData.append('file', selectedFile);
+    cloudinaryFormData.append('upload_preset', 'ikm_uploads'); // Pakai preset yang sama dengan IKM
+    cloudinaryFormData.append('folder', 'umkm'); // Folder terpisah untuk UMKM
+    
+    const response = await fetch(
+      'https://api.cloudinary.com/v1_1/dgfs2wh8a/image/upload', // Cloud name yang sama
+      {
         method: 'POST',
-        body: formDataUpload,
-      });
-
-      const result = await response.json();
-
-      if (result.success) {
-        return result.url;
-      } else {
-        alert(result.error || 'Gagal upload gambar');
-        return null;
+        body: cloudinaryFormData,
       }
-    } catch (error) {
-      console.error('Error uploading image:', error);
-      alert('Gagal upload gambar');
-      return null;
-    } finally {
-      setUploadingImage(false);
-    }
-  };
+    );
 
+    const data = await response.json();
+
+    if (data.secure_url) {
+      return data.secure_url;
+    } else {
+      alert('Gagal upload gambar ke server. Silakan coba lagi.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error uploading to Cloudinary:', error);
+    alert('Gagal upload gambar. Silakan coba lagi.');
+    return null;
+  } finally {
+    setUploadingImage(false);
+  }
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 

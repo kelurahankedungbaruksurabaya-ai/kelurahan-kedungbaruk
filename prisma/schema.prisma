@@ -55,3 +55,22 @@ model Settings {
 
   @@map("settings")
 }
+model Umkm {
+  id            Int      @id @default(autoincrement())
+  nama_produk   String   @db.VarChar(150)
+  jenis_usaha   String   @db.VarChar(100)
+  nama_pemilik  String   @db.VarChar(100)
+  kategori      String   @db.VarChar(50)
+  harga_min     Int?
+  harga_max     Int?
+  no_wa         String?  @db.VarChar(20)
+  deskripsi     String?  @db.Text
+  alamat        String?  @db.VarChar(255)
+  foto_url      String?  @db.Text
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now()) @updatedAt
+
+  @@index([kategori])
+  @@index([created_at])
+  @@map("umkm")
+}

@@ -53,3 +53,11 @@ export const DEFAULT_SETTINGS = {
   link_kng: "https://example.com/kng",
   link_sswalfa: "https://example.com/sswalfa",
 };
+export const KATEGORI_UMKM = [
+  'Makanan',
+  'Minuman',
+  'Fashion',
+  'Jasa',
+  'Kerajinan',
+  'Lainnya'
+] as const;

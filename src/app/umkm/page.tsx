@@ -59,7 +59,7 @@ export default function UMKMPage() {
       'Fashion': '👕',
       'Jasa': '⚙️',
       'Kerajinan': '🎨',
-      'Lainnya': '🏪'
+      'Lainnya': '🪑'
     };
     return icons[kategori] || '📦';
   };
@@ -154,31 +154,42 @@ export default function UMKMPage() {
                   key={umkm.id}
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all transform hover:-translate-y-1"
                 >
-                  {/* Header Card dengan Icon */}
-                  <div className="relative h-48 bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50 flex items-center justify-center overflow-hidden">
-                    {/* Dots Pattern di 4 pojok */}
-                    <div className="absolute top-4 left-4 grid grid-cols-3 gap-1">
-                      {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                      ))}
-                    </div>
-                    <div className="absolute top-4 right-4 grid grid-cols-3 gap-1">
-                      {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                      ))}
-                    </div>
-                    <div className="absolute bottom-4 left-4 grid grid-cols-3 gap-1">
-                      {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                      ))}
-                    </div>
-                    <div className="absolute bottom-4 right-4 grid grid-cols-3 gap-1">
-                      {[...Array(9)].map((_, i) => (
-                        <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
-                      ))}
-                    </div>
-                    {/* Icon Besar */}
-                    <span className="text-8xl z-10">{getIcon(umkm.kategori)}</span>
+                  {/* Header Card dengan Foto */}
+                  <div className="relative h-48 bg-gradient-to-br from-green-50 via-blue-50 to-yellow-50 overflow-hidden">
+                    {umkm.foto_url ? (
+                      <img
+                        src={umkm.foto_url}
+                        alt={umkm.nama_produk}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      // Fallback ke icon kalau ga ada foto
+                      <div className="flex items-center justify-center h-full">
+                        {/* Dots Pattern di 4 pojok */}
+                        <div className="absolute top-4 left-4 grid grid-cols-3 gap-1">
+                          {[...Array(9)].map((_, i) => (
+                            <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                          ))}
+                        </div>
+                        <div className="absolute top-4 right-4 grid grid-cols-3 gap-1">
+                          {[...Array(9)].map((_, i) => (
+                            <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                          ))}
+                        </div>
+                        <div className="absolute bottom-4 left-4 grid grid-cols-3 gap-1">
+                          {[...Array(9)].map((_, i) => (
+                            <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                          ))}
+                        </div>
+                        <div className="absolute bottom-4 right-4 grid grid-cols-3 gap-1">
+                          {[...Array(9)].map((_, i) => (
+                            <div key={i} className="w-1.5 h-1.5 bg-gray-300 rounded-full"></div>
+                          ))}
+                        </div>
+                        {/* Icon Besar */}
+                        <span className="text-8xl z-10">{getIcon(umkm.kategori)}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Content Card */}

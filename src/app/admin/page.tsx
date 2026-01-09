@@ -22,6 +22,7 @@ import {
   LogOut,
   Search,
   Settings,
+  Store,
   Upload,
   Users,
 } from "lucide-react";
@@ -180,6 +181,18 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="flex items-center gap-2">
+              <Link href="/admin/umkm">
+              <Button variant="outline" size="sm">
+              <Store className="w-4 h-4 mr-2" />
+               Kelola UMKM
+              </Button>
+              </Link>
+              <Link href="/admin/ikm">
+              <Button variant="outline" size="sm">
+              <Upload className="w-4 h-4 mr-2" />
+               Upload IKM
+              </Button>
+              </Link>
               <Link href="/admin/ikm">
                 <Button variant="outline" size="sm">
                   <Upload className="w-4 h-4 mr-2" />

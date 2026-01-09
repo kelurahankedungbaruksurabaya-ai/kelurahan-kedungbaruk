@@ -7,10 +7,14 @@ export default function Footer() {
         <div className="grid md:grid-cols-3 gap-8 items-start">
           {/* Logo & Tagline */}
           <div className="flex items-start gap-4">
-            <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center flex-shrink-0">
-              <span className="text-xl font-bold bg-gradient-to-r from-yellow-500 via-orange-500 to-green-500 bg-clip-text text-transparent">
-                KBK
-              </span>
+            <div className="w-16 h-16 relative flex-shrink-0">
+              <Image 
+                src="/logo.kbk.png" 
+                alt="Logo Kelurahan Kedung Baruk" 
+                width={64} 
+                height={64}
+                className="object-contain"
+              />
             </div>
             <div>
               <h3 className="font-bold text-lg mb-2">Kelurahan Kedung Baruk</h3>

@@ -188,12 +188,6 @@ export default function AdminDashboardPage() {
               </Button>
               </Link>
               <Link href="/admin/ikm">
-              <Button variant="outline" size="sm">
-              <Upload className="w-4 h-4 mr-2" />
-               Upload IKM
-              </Button>
-              </Link>
-              <Link href="/admin/ikm">
                 <Button variant="outline" size="sm">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload IKM

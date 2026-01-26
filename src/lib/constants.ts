@@ -3,7 +3,6 @@ export const KEPERLUAN_OPTIONS = [
   "pindah dalam kota",
   "pindah keluar",
   "keabsahan",
-  "legalisir",
   "pengajuan ktp orang asing",
   "perubahan biodata",
   "pemutakhiran gelar",
@@ -26,7 +25,7 @@ export const KEPERLUAN_OPTIONS = [
   "perubahan nama akta perceraian",
   "surat keterangan sudah menikah",
   "perubahan biodata peristiwa penting dengan",
-  "surat pertanyaan belum memiliki rumah",
+  "surat pernyataan belum memiliki rumah",
   "surat pernyataan belum pernah menikah",
   "surat pengantar nikah",
   "surat kuasa khusus untuk pembayaran pensiun",
@@ -39,13 +38,14 @@ export const KEPERLUAN_OPTIONS = [
   "surat permohonan penerbitan BPKB (untuk kehilangan BPKPB)",
   "Surat keterangan ahli waris",
   "surat pernyataan penghasilan untuk non formal",
-  "surat keterangan domisili (lembaga berbadan hukum, lembaga berbadan usaha, lembaga non berbadan hukum dan lembaga non berbadan usaha"
+  "surat keterangan domisili (lembaga berbadan hukum, lembaga berbadan usaha, lembaga non berbadan hukum dan lembaga non berbadan usaha)",
+  "surat keterangan Domisili (Umum/Pribadi)"
 ];
 
 export const KELURAHAN_INFO = {
   name: "Kelurahan Kedung Baruk",
   address: "Jl. Raya Kedung Asem No. 59 Surabaya, Surabaya, Jawa Timur, Indonesia",
-  phone: "(031) 8781191",
+  phone: "085168605002",
   email: "kel_kedungbaruk@surabaya.go.id",
 };
 

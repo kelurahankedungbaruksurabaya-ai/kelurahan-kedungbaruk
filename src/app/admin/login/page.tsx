@@ -31,9 +31,12 @@ export default function AdminLoginPage() {
       const data = await response.json();
 
       if (data.success) {
-        // Simpan token di localStorage
+        // ✅ Simpan token di localStorage DAN cookies
         localStorage.setItem("admin_token", data.data.token);
         localStorage.setItem("admin_user", JSON.stringify(data.data.user));
+
+        // ✅ Set cookie untuk middleware
+        document.cookie = `admin_token=${data.data.token}; path=/; max-age=86400`; // 24 jam
 
         // Redirect ke dashboard
         router.push("/admin");

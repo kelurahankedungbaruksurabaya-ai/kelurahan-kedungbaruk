@@ -34,7 +34,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-green-400 text-lg">📞</span>
-                <span>(031) 8781191</span>
+                <span>085168605002</span>
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-green-400 text-lg">✉️</span>

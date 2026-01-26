@@ -148,6 +148,7 @@ export default function AdminDashboardPage() {
   const handleLogout = () => {
     localStorage.removeItem("admin_token");
     localStorage.removeItem("admin_user");
+    document.cookie = "admin_token=; path=/; max-age=0";
     router.push("/admin/login");
   };
 
